@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.system-font {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.02rem;
+}
+.full-screen {
+    min-height: 90vh;
+}
+.table-head {
+    background-color: #078391;
+    color: white !important;
+}
+.table-head-in {
+    background-color: #4DB6AC;
+    color: white !important;
+}
+
+.table-head-out {
+    background-color: #0ABCD0;
+    color: white !important;
+}
+.dialog-card {
+    padding: 2rem;
+}
+
+.card-title {
+    background-color: #078391;
+    color: white !important;
+}
