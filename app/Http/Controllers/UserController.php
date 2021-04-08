@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserHRD;
+use App\Models\UserWKN;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +20,7 @@ class UserController extends Controller
         ->get();
     }
     public function store(Request $request) {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->User, [
             'Username' => 'required|string|min:5|max:7',
             'Password' => 'required|string|min:5|max:20'
         ]);
@@ -44,8 +46,7 @@ class UserController extends Controller
         return response()->json(['message' => 'Update successful.', 200]);
     }
     public function password(Request $request, $id) {
-        $user = User::find($id);
-        if(!$user) return;
+        $user = User::findOrFail($id);
         $user->update([
             'Password' => Hash::make($request->Password),
             'updated_by' => $request->updated_by
@@ -53,13 +54,24 @@ class UserController extends Controller
         return response()->json(['message' => 'Update password successful.'], 200);
     }
     public function delete($id) {
-        $user = User::find($id);
+        $user = User::findOrFail($id);
         $user->delete($user->all());
         return response()->json(['message' => 'Delete successful.'], 200);
     }
     public function restore($id) {
-        $user = User::withTrashed()->find($id);
+        $user = User::withTrashed()->findOrFail($id);
         $user->restore($user->all());
         return response()->json(['message' => 'Restore successful.'], 200);
+    }
+    public function employeeInfo($id) {
+        $employeeCode = strlen($id);
+        $info = $employeeCode == 7 ? $this->wukong($id) : $this->hrd($id);
+        return $info;
+    }
+    public function wukong($id) {
+        return UserWKN::where('EmployeeCode', $id)->firstOrFail();
+    }
+    public function hrd($id) {
+        return UserHRD::where('EmployeeCode', $id)->firstOrFail();
     }
 }

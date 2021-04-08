@@ -1,11 +1,17 @@
 <template>
-    <v-btn tile block color="primary">{{text}}</v-btn>
+    <v-btn tile block color="primary" :disabled="disabled" :loading="loading">{{text}}</v-btn>
 </template>
 <script>
 export default {
     props: {
         text: {
             type: String
+        },
+        disabled: {
+            type: Boolean
+        },
+        loading: {
+            type: Boolean
         }
     }
 }

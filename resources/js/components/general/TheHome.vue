@@ -5,10 +5,10 @@
             <dashboard-card color="primary" icon="mdi-view-parallel" title="Bundles" :value="totalBundles"></dashboard-card>
         </div>
         <div id="second-card">
-            <dashboard-card color="success" icon="mdi-home" title="Scanned" :value="totalScanned"></dashboard-card>
+            <dashboard-card color="success" icon="mdi-barcode-scan" title="Scanned" :value="totalScanned"></dashboard-card>
         </div>
         <div id="third-card">
-            <dashboard-card color="blue" icon="mdi-account" title="Manual Encoded" :value="totalEncoded"></dashboard-card>
+            <dashboard-card color="blue" icon="mdi-keyboard-outline" title="Manual Encoded" :value="totalEncoded"></dashboard-card>
         </div>
         <div id="fourth-card">
             <dashboard-card color="error" icon="mdi-arrow-right-bold-box-outline" title="OUT" :value="totalOutBundles"></dashboard-card>
@@ -29,20 +29,21 @@
                 <v-card-title>User activity logs</v-card-title>
                 <div class="timeline-content">
                     <v-timeline align-top dense>
-                    <v-timeline-item :color="logs.ActionTaken == 'OUT' ? 'error' : logs.ActionTaken == 'MANUAL' ? 'blue' : 'success'" small v-for="logs in userActivity" :key="logs.id">
-                        <v-row class="pt-1">
-                            <v-col cols="4">
-                                <strong>{{logs.updated_by}}</strong>
-                            </v-col>
-                            <v-col>
-                                <strong>{{logs.ActionTaken}}</strong>
-                                <div class="caption">
-                                    {{logs.BundleNo}} - {{logs.Remarks}}
-                                </div>
-                            </v-col>
-                        </v-row>
-                    </v-timeline-item>
-                </v-timeline>
+                        <v-timeline-item :color="logs.ActionTaken == 'OUT' ? 'error' : logs.ActionTaken == 'MANUAL' ? 'blue' : 'success'" small v-for="logs in userActivity" :key="logs.id">
+                            <v-row dense>
+                                <v-col cols="4">
+                                    <strong>{{logs.updated_by}}</strong>
+                                </v-col>
+                                <v-col>
+                                    <strong>{{logs.ActionTaken}}</strong>
+                                    <div class="caption">
+                                        {{logs.BundleNo}} - {{logs.Remarks}}
+                                        <span class="grey--text">{{formatDate(logs.created_at)}}</span>
+                                    </div>
+                                </v-col>
+                            </v-row>
+                        </v-timeline-item>
+                    </v-timeline>
                 </div>
             </v-card>
         </div>
@@ -51,6 +52,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 export default {
     data: () => {
         return {
@@ -95,95 +97,42 @@ export default {
                     sortable: false
                 },
             ],
-            userActivity: []
+            userActivity: [],
         }
     },
     created() {
-        this.bundles();
-        this.scannedBundles();
-        this.encodedBundles();
-        this.outBundles();
-        this.outOverview();
-        this.activityLogs();
+        this.initializeData();
+        this.updateData();
     },
     methods: {
-        async bundles() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/count/bundles`);
-                this.totalBundles = response.data;
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
+        initializeData() {
+            this.totalBundles = this.$store.getters.getTotalBundles;
+            this.totalScanned = this.$store.getters.getTotalScanned;
+            this.totalEncoded = this.$store.getters.getTotalEncoded;
+            this.totalOutBundles = this.$store.getters.getTotalOutBundles;
+            this.outBundlesOverview = this.$store.getters.getBundlesOverview;
+            this.userActivity = this.$store.getters.getUserActivity;
         },
-        async scannedBundles() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/count/bundles/scanned`);
-                this.totalScanned = response.data;
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
+        updateData() {
+            setInterval(() => {
+                this.totalBundles = this.$store.getters.getTotalBundles;
+                this.totalScanned = this.$store.getters.getTotalScanned;
+                this.totalEncoded = this.$store.getters.getTotalEncoded;
+                this.totalOutBundles = this.$store.getters.getTotalOutBundles;
+                this.outBundlesOverview = this.$store.getters.getBundlesOverview;
+                this.userActivity = this.$store.getters.getUserActivity;
+            }, 60 * 1000);
         },
-        async encodedBundles() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/count/bundles/encoded`);
-                this.totalEncoded = response.data;
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
+        formatDate(date) {
+            return moment(date).format('lll');
         },
-        async outBundles() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/count/bundles/out`);
-                this.totalOutBundles = parseInt(response.data[0].Count);
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
-        },
-        async outOverview() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/overviews/bundles-out`)
-                for (let index = 0; index < response.data.length; index++) {
-                    response.data[index].SequenceId = index + 1;
-                    response.data[index].CreatedDate = response.data[index].CreatedDate.substring(0, 10);
-                }
-                this.outBundlesOverview = await response.data;
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
-        },
-        async activityLogs() {
-            try {
-                this.$store.dispatch('showProgressBar');
-                const response = await axios.get(`${this.$url}/api/dashboard/logs`);
-                this.userActivity = response.data;
-                this.$store.dispatch('hideProgressBar');
-            } catch (error) {
-                console.log(error);
-                this.$store.dispatch('hideProgressBar');
-            }
-        }
     }
 }
 </script>
 
 <style scoped>
 #dashboard {
-    margin: 4rem 2rem;
+    margin: 4rem 2rem 1rem 2rem;
 }
 
 .cards {
@@ -230,6 +179,12 @@ export default {
 
 .timeline-content {
     padding: 0 0 2rem 0;
+}
+
+.caption {
+    display: flex;
+    flex-direction: column;
+    word-spacing: 1px;
 }
 
 .v-card__title {

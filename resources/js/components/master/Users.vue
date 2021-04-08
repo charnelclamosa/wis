@@ -26,9 +26,9 @@
     <v-dialog persistent v-model="storeDialog" width="400">
         <v-card tile class="store">
             <div class="store-content">
-                <v-text-field dense autofocus label="Username" v-model="UserStore.Username" required :error-messages="storeUsernameValidation" @blur="$v.UserStore.Username.$touch()"></v-text-field>
-                <v-text-field dense label="Password" v-model="UserStore.Password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'" @click:append="showPassword = !showPassword" required :error-messages="storePasswordValidation" @blur="$v.UserStore.Password.$touch()"></v-text-field>
-                <v-select dense label="Role" v-model="UserStore.RoleId" :items="Roles" item-value="id" item-text="RoleName" required :error-messages="storeRoleIdValidation" @blur="$v.UserStore.RoleId.$touch()"></v-select>
+                <v-text-field dense autofocus label="Username" v-model="UserCreate.Username" required :error-messages="storeUsernameValidation" @blur="$v.UserCreate.Username.$touch()"></v-text-field>
+                <v-text-field dense label="Password" v-model="UserCreate.Password" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :type="showPassword ? 'text' : 'password'" @click:append="showPassword = !showPassword" required :error-messages="storePasswordValidation" @blur="$v.UserCreate.Password.$touch()"></v-text-field>
+                <v-select dense label="Role" v-model="UserCreate.RoleId" :items="Roles" item-value="id" item-text="RoleName" required :error-messages="storeRoleIdValidation" @blur="$v.UserCreate.RoleId.$touch()"></v-select>
             </div>
             <div class="store-footer">
                 <outline-btn @click.native="storeDialog = false" text="Cancel"></outline-btn>
@@ -58,6 +58,7 @@ import { required } from 'vuelidate/lib/validators';
 export default {
     data: () => {
         return {
+            user: {},
             showPassword: false,
             tableHead: [{
                     text: 'ID',
@@ -82,7 +83,7 @@ export default {
             ],
             Users: [],
             Roles: [],
-            UserStore: {},
+            UserCreate: {},
             UserUpdate: {},
             UserDelete: {},
             storeDialog: false,
@@ -91,7 +92,7 @@ export default {
         }
     },
     validations: {
-        UserStore: { 
+        UserCreate: { 
             Username: { required },
             Password: { required },
             RoleId: { required }
@@ -103,20 +104,20 @@ export default {
     computed: {
         storeUsernameValidation() {
             const errors = [];
-            if(!this.$v.UserStore.Username.$dirty) return errors;
-            !this.$v.UserStore.Username.required && errors.push('This field is required');
+            if(!this.$v.UserCreate.Username.$dirty) return errors;
+            !this.$v.UserCreate.Username.required && errors.push('This field is required');
             return errors;
         },
         storePasswordValidation() {
             const errors = [];
-            if(!this.$v.UserStore.Password.$dirty) return errors;
-            !this.$v.UserStore.Password.required && errors.push('This field is required');
+            if(!this.$v.UserCreate.Password.$dirty) return errors;
+            !this.$v.UserCreate.Password.required && errors.push('This field is required');
             return errors;
         },
         storeRoleIdValidation() {
             const errors = [];
-            if(!this.$v.UserStore.RoleId.$dirty) return errors;
-            !this.$v.UserStore.RoleId.required && errors.push('This field is required');
+            if(!this.$v.UserCreate.RoleId.$dirty) return errors;
+            !this.$v.UserCreate.RoleId.required && errors.push('This field is required');
             return errors;
         },
         updateUsernameValidation() {
@@ -158,17 +159,18 @@ export default {
             this.$store.dispatch('hideProgressBar');
         },
         async storeUser() {
-            this.$v.UserStore.$touch();
-            if(this.$v.UserStore.$invalid) return;
+            this.$v.UserCreate.$touch();
+            if(this.$v.UserCreate.$invalid) return;
             try {
                 this.$store.dispatch('showCardProgressBar');
                 const user = this.$store.getters.getUserData;
                 await axios.post(`${this.$url}/api/users`, {
-                    User: this.UserStore,
+                    User: this.UserCreate,
                     updated_by: user.Username
                 });
-                this.getUsers();
+                await this.getUsers();
                 this.storeDialog = false;
+                this.UserCreate = {};
                 this.notification('success', 'Store successful.');
             } catch (error) {
                 console.log(error);

@@ -293,13 +293,7 @@ export default {
             inputDate: null,
             lumberLocations: [],
             lumberLines: [],
-            inputSelects: {
-                LocationCode: '001',
-                LineCode: '001',
-                ItemId: 'P002817',
-                InvoiceNo: 'AX1706061/IFW',
-                Date: '2021-03-02'
-            },
+            inputSelects: {},
             date: null,
             Bundles: [],
             selected: [],
@@ -564,13 +558,13 @@ export default {
             try {
                 this.$store.dispatch('showCardProgressBar');
                 const response = await axios.get(`${this.$url}/api/bundles/id/latest`);
-                const latestId = response.data;
+                const latestId = await response.data;
                 // Out Header
-                this.saveShippedOutHeader(latestId, this.outDetails);
+                await this.saveShippedOutHeader(latestId, this.outDetails);
                 // Out Details
-                this.saveShippedOutDetails(latestId, bundles);
+                await this.saveShippedOutDetails(latestId, bundles);
                 // Out Logs
-                this.createBundleLogs(bundles, remarks, 'OUT');
+                await this.createBundleLogs(bundles, remarks, 'OUT');
                 this.$store.dispatch('hideCardProgressBar');
                 this.outBundlesDialog = false;
                 this.outDetails = {};
@@ -600,7 +594,7 @@ export default {
             }
             this.$store.dispatch('hideProgressBar');
         },
-        saveShippedOutHeader(id, details) {
+        async saveShippedOutHeader(id, details) {
             try {
                 axios.post(`${this.$url}/api/bundles/out/header/` + id, {
                     BundleItemShippingId: id,
@@ -613,7 +607,7 @@ export default {
                 console.log(error);
             }
         },
-        saveShippedOutDetails(id, bundles) {
+        async saveShippedOutDetails(id, bundles) {
             try {
                 axios.post(`${this.$url}/api/bundles/out/details/` + id, {
                     BundleItemShippingId: id,
@@ -623,7 +617,7 @@ export default {
                 console.log(error);
             }
         },
-        createBundleLogs(bundles, remarks, action) {
+        async createBundleLogs(bundles, remarks, action) {
             try {
                 axios.post(`${this.$url}/api/logs`, {
                     Bundles: bundles,
@@ -644,10 +638,12 @@ export default {
             if (this.$v.inDetails.$invalid) return;
             try {
                 this.$store.dispatch('showCardProgressBar');
-                // Details
-                await axios.delete(`${this.$url}/api/bundles/in/details/` + bundles[0].BundleItemShippingId, {BundleItemShippingId: parseInt(bundles[0].BundleItemShippingId)});
+                for (let index = 0; index < bundles.length; index++) {
+                    // Details
+                    await axios.delete(`${this.$url}/api/bundles/in/details/` + bundles[index].BundleNo);
+                }
                 // Header
-                await axios.delete(`${this.$url}/api/bundles/in/header/` + bundles[0].BundleItemShippingId, {BundleItemShippingId: parseInt(bundles[0].BundleItemShippingId)});
+                await axios.delete(`${this.$url}/api/bundles/in/header/` + bundles[0].BundleItemShippingId);
                 // Logs
                 await this.createBundleLogs(bundles, remarks, 'IN');
                 this.$store.dispatch('hideCardProgressBar');

@@ -8,13 +8,12 @@
     <v-navigation-drawer v-model="drawer" absolute temporary>
         <template v-slot:prepend>
             <v-list-item two-line>
-                <v-list-item-avatar>
-                    <img src="https://randomuser.me/api/portraits/lego/5.jpg">
+                <v-list-item-avatar size="60">
+                    <v-img :src="user.Gender == 'F' ? '/lim/images/Female.png' : '/lim/images/Male.png'" alt="" eager />
                 </v-list-item-avatar>
-
                 <v-list-item-content>
-                    <v-list-item-title>Charnel S. Clamosa</v-list-item-title>
-                    <v-list-item-subtitle>System Administrator</v-list-item-subtitle>
+                    <v-list-item-title>{{user.EmployeeName ? user.EmployeeName : user.Username}}</v-list-item-title>
+                    <v-list-item-subtitle>{{user.RoleId == 1 ? 'Administrator' : 'User'}}</v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
         </template>
@@ -28,19 +27,19 @@
                     </v-list-item-icon>
                     <v-list-item-title>Home</v-list-item-title>
                 </v-list-item>
-                <v-list-item to="/print">
-                    <v-list-item-icon>
-                        <v-icon>mdi-printer</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-title>Print Stickers</v-list-item-title>
-                </v-list-item>
                 <v-list-item to="/monitoring">
                     <v-list-item-icon>
                         <v-icon>mdi-table</v-icon>
                     </v-list-item-icon>
                     <v-list-item-title>Monitoring</v-list-item-title>
                 </v-list-item>
-                <v-list-group no-action prepend-icon="mdi-cog">
+                <v-list-item to="/print">
+                    <v-list-item-icon>
+                        <v-icon>mdi-printer</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Print Bundles</v-list-item-title>
+                </v-list-item>
+                <v-list-group no-action prepend-icon="mdi-cog" v-show="user.RoleId == 1">
                     <template v-slot:activator>
                         <v-list-item-title>Admin Panel</v-list-item-title>
                     </template>
@@ -54,8 +53,8 @@
             </v-list-item-group>
         </v-list>
         <template v-slot:append>
-            <div class="pa-2">
-                <block-btn @click.native="logout()" text="Logout"></block-btn>
+            <div class="px-2 pb-3">
+                <block-btn @click.native="logout()" text="Logout" :disabled="btnLoader" :loading="btnLoader"></block-btn>
             </div>
         </template>
     </v-navigation-drawer>
@@ -68,29 +67,94 @@ export default {
         return {
             drawer: false,
             group: null,
-            systemName: 'WIS'
+            systemName: 'Lumber Inventory Monitoring',
+            user: {},
+            male: '/images/Male.png',
+            female: '/images/',
+            btnLoader: false,
 
         }
     },
     created() {
-        this.initializeToken()
+        this.initializeToken();
+        setInterval(() => {
+            this.bundles();
+            this.scannedBundles();
+            this.encodedBundles();
+            this.outBundles();
+            this.outOverview();
+            this.activityLogs();
+        }, 60*1000);
     },
     methods: {
         initializeToken() {
-            const user = this.$store.getters.getUserData;
-            axios.defaults.headers.common['Authorization'] = `Bearer ${user.token}`;
+            this.user = this.$store.getters.getUserData;
+            axios.defaults.headers.common['Authorization'] = `Bearer ${this.user.Token}`;
         },
         async logout() {
             try {
+                this.btnLoader = true;
                 await axios.post(`${this.$url}/api/logout`);
-                this.$store.dispatch('authenticationClear');
-                this.$router.push({
-                    name: 'login'
-                })
+                await this.$store.dispatch('authenticationClear');
+                this.btnLoader = false;
+                this.$router.push({ name: 'login'})
             } catch (error) {
-                console.log(error)
+                console.log(error);
+                this.btnLoader = false;
             }
-        }
+        },
+        async bundles() {
+            try {
+                const response = await axios.get(`${this.$url}/api/count/bundles`);
+                this.$store.dispatch('setTotalBundles', response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async scannedBundles() {
+            try {
+                const response = await axios.get(`${this.$url}/api/count/bundles/scanned`);
+                this.$store.dispatch('setTotalScanned', response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async encodedBundles() {
+            try {
+                const response = await axios.get(`${this.$url}/api/count/bundles/encoded`);
+                this.$store.dispatch('setTotalEncoded', response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async outBundles() {
+            try {
+                const response = await axios.get(`${this.$url}/api/count/bundles/out`);
+                this.$store.dispatch('setTotalOutBundles', parseInt(response.data[0].Count));
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async outOverview() {
+            try {
+                const response = await axios.get(`${this.$url}/api/overviews/bundles-out`)
+                for (let index = 0; index < response.data.length; index++) {
+                    response.data[index].SequenceId = index + 1;
+                    response.data[index].CreatedDate = response.data[index].CreatedDate.substring(0, 10);
+                }
+                this.$store.dispatch('setBundlesOverview', response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        async activityLogs() {
+            try {
+                const response = await axios.get(`${this.$url}/api/dashboard/logs`);
+                this.$store.dispatch('setUserActivity', response.data);
+            } catch (error) {
+                console.log(error);
+            }
+        },
     }
 
 }

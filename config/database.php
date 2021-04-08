@@ -114,6 +114,30 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
+        'companyinformation_wkn' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_companyinformation_wkn', 'localhost'),
+            'port' => env('DB_PORT_companyinformation_wkn', '1433'),
+            'database' => env('DB_DATABASE_companyinformation_wkn', 'forge'),
+            'username' => env('DB_USERNAME_companyinformation_wkn', 'forge'),
+            'password' => env('DB_PASSWORD_companyinformation_wkn', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+        'companyinformation_hrd' => [
+            'driver' => 'sqlsrv',
+            'url' => env('DATABASE_URL'),
+            'host' => env('DB_HOST_companyinformation_hrd', 'localhost'),
+            'port' => env('DB_PORT_companyinformation_hrd', '1433'),
+            'database' => env('DB_DATABASE_companyinformation_hrd', 'forge'),
+            'username' => env('DB_USERNAME_companyinformation_hrd', 'forge'),
+            'password' => env('DB_PASSWORD_companyinformation_hrd', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
        
        
 

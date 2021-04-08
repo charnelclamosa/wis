@@ -19,7 +19,7 @@ Vue.use(Vuetify, {
 Vue.use(VueRouter);
 Vue.use(Vuelidate);
 Vue.use(Notifications);
-Vue.prototype.$url = window.location.origin
+Vue.prototype.$url = window.location.origin+'/lim';
 Vue.component('primary-btn', require('./components/base/PrimaryButton').default);
 Vue.component('block-btn', require('./components/base/BlockButton').default);
 Vue.component('outline-btn', require('./components/base/OutlineButton').default);

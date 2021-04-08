@@ -6,7 +6,7 @@
 .system-font {
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
-    letter-spacing: 0.02rem;
+    letter-spacing: 0.1rem;
 }
 .full-screen {
     min-height: 90vh;

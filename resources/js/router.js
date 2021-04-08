@@ -13,6 +13,7 @@ import users from '../views/master/Users';
 Vue.use(VueRouter)
 
 const router = new VueRouter({
+    base: '/lim/',
     mode: 'history',
     routes: [
         {
@@ -34,9 +35,6 @@ const router = new VueRouter({
                 default: home,
                 navigation: navDrawer
             },
-            beforeEnter: () => {
-                
-            }
         },
         {
             path: '/print',
@@ -76,7 +74,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
     if(to.meta.requiresAuth) {
         const user = store.getters.getUserData;
-        if(!user.hasOwnProperty('token')) {
+        if(!user.hasOwnProperty('Token')) {
             next('/login');
         } else {
             next();

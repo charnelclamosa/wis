@@ -64,10 +64,7 @@ class BundleController extends Controller
         return response()->json(['message' => 'Data has been deleted.'], 200);
     }
     public function inDetails($id) {
-        $bundles = BundleShippingDetail::where('BundleItemShippingId', $id)->get();
-        foreach($bundles as $bundle) {
-            $bundle->delete();
-        }
+        $bundle = BundleShippingDetail::where('BundleNo', $id)->delete();
         return response()->json(['message' => 'Data has been deleted.'], 200);
     }
     public function forPrinting($line, $location) {

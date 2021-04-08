@@ -4,6 +4,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('login', 'AuthenticationController@login');
+Route::get('users/{id}', 'UserController@employeeInfo');
+Route::get('count/bundles', 'DashboardController@bundles');
+Route::get('count/bundles/scanned', 'DashboardController@scanned');
+Route::get('count/bundles/encoded', 'DashboardController@encoded');
+Route::get('count/bundles/out', 'DashboardController@out');
+Route::get('overviews/bundles-out', 'DashboardController@outBundles');
+Route::get('dashboard/logs', 'DashboardController@activityLogs');
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::post('logout', 'AuthenticationController@logout');
     Route::get('lumbers/lines', 'LumberLineController@index');
@@ -42,14 +49,6 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::get('divisions', 'DivisionController@index');
     Route::get('sections', 'SectionController@index');
     Route::get('purposes', 'PurposeController@index');
-
-    Route::get('count/bundles', 'DashboardController@bundles');
-    Route::get('count/bundles/scanned', 'DashboardController@scanned');
-    Route::get('count/bundles/encoded', 'DashboardController@encoded');
-    Route::get('count/bundles/out', 'DashboardController@out');
-    Route::get('overviews/bundles-out', 'DashboardController@outBundles');
-    Route::get('dashboard/logs', 'DashboardController@activityLogs');
 });
-
 
 
