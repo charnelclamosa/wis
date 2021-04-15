@@ -15,7 +15,6 @@
         </div>
     </div>
     <div id="content">
-        <!-- <div class="scanned"></div> -->
         <div class="table">
             <v-card>
                 <v-card-title>Bundles with <span class="error--text mx-1">OUT</span> status</v-card-title>
@@ -34,7 +33,7 @@
                                 <v-col cols="4">
                                     <strong>{{logs.updated_by}}</strong>
                                 </v-col>
-                                <v-col>
+                                <v-col class="pr-1">
                                     <strong>{{logs.ActionTaken}}</strong>
                                     <div class="caption">
                                         {{logs.BundleNo}} - {{logs.Remarks}}
@@ -190,5 +189,71 @@ export default {
 .v-card__title {
     letter-spacing: 1px;
     font-size: medium;
+}
+
+@media screen and (max-width: 414px) {
+    .cards, #content {
+        display: flex;
+        flex-direction: column;
+    }
+    .cards div:not(:last-child) {
+    margin-right: 0;
+    }
+    .cards div {
+        margin: 0.5rem 0;
+    }
+    .table {
+        flex: none;
+    }
+    .timeline {
+        width: 100%;
+        margin: 0;
+    } 
+}
+@media screen and (max-width: 601px) {
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    #content {
+        display: flex;
+        flex-direction: column;
+    }
+    .cards div:not(:last-child) {
+    margin-right: 0;
+    }
+    .cards div {
+        margin: 0.5rem 0.3rem;
+    }
+    .table {
+        flex: none;
+    }
+    .timeline {
+        width: 100%;
+        margin: 0;
+    } 
+}
+@media screen and (min-width: 602px) and (max-width: 800px) and (orientation: portrait) {
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    #content {
+        display: flex;
+        flex-direction: column;
+    }
+    .cards div:not(:last-child) {
+    margin-right: 0;
+    }
+    .cards div {
+        margin: 0.5rem 0.3rem;
+    }
+    .table {
+        flex: none;
+    }
+    .timeline {
+        width: 100%;
+        margin: 0;
+    } 
 }
 </style>

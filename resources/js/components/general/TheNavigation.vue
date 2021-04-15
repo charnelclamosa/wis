@@ -4,6 +4,8 @@
     <v-app-bar class="app-bar" dark>
         <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
         <v-toolbar-title class="system-font">{{systemName}}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn small icon @click="logout()" :disabled="btnLoader" :loading="btnLoader"><v-icon>mdi-logout</v-icon></v-btn>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" absolute temporary>
         <template v-slot:prepend>
@@ -52,11 +54,11 @@
                 </v-list-group>
             </v-list-item-group>
         </v-list>
-        <template v-slot:append>
+        <!-- <template v-slot:append>
             <div class="px-2 pb-3">
                 <block-btn @click.native="logout()" text="Logout" :disabled="btnLoader" :loading="btnLoader"></block-btn>
             </div>
-        </template>
+        </template> -->
     </v-navigation-drawer>
 </div>
 </template>

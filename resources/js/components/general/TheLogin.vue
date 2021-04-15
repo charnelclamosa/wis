@@ -184,6 +184,7 @@ export default {
 
 .login {
     display: flex;
+    margin: 0 2rem;
     background-image: linear-gradient(to top, #d5d4d0 0%, #d5d4d0 1%, #eeeeec 31%, #efeeec 75%, #e9e9e7 100%);
 }
 
@@ -230,6 +231,19 @@ export default {
     .login-form {
         width: 100%;
         padding: 4rem 2rem;
+    }
+}
+@media screen and (max-width: 601px) {
+    .login {
+            display: flex;
+            flex-direction: column;
+        }
+    .login-form {
+        width: 100%;
+        padding-bottom: 10px;
+    }
+    .image {
+        max-width: 225px;
     }
 }
 </style>

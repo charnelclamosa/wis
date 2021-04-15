@@ -8,14 +8,9 @@ import Vuelidate from 'vuelidate'
 import Notifications from 'vue-notification';
 import "@mdi/font/css/materialdesignicons.css";
 import 'vuetify/dist/vuetify.min.css';
-
 window.Vue = require('vue').default;
 window.axios = require('axios');
-Vue.use(Vuetify, {
-    icons: {
-        iconfont: "mdi"
-    }
-});
+Vue.use(Vuetify, {icons: {iconfont: "mdi"}});
 Vue.use(VueRouter);
 Vue.use(Vuelidate);
 Vue.use(Notifications);
@@ -28,7 +23,6 @@ Vue.component('card-progress-bar', require('./components/base/CardProgressBar').
 Vue.component('snack-bar', require('./components/base/SnackBar').default);
 Vue.component('dashboard-card', require('./components/base/DashboardCard').default);
 Vue.component('manual-add-bundle', require('./components/transaction/ManualAddBundle').default);
-
 const app = new Vue({
     el: '#app',
     store,
@@ -36,6 +30,4 @@ const app = new Vue({
     vuetify: new Vuetify({theme: {themes: {light: {primary: '#033E44', secondary: '#0ABCD0'}}}}),
     render: h => h(App)
 });
-
 export default app;
-

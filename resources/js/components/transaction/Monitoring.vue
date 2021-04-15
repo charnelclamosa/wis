@@ -775,4 +775,16 @@ export default {
 .content-legend h6 {
     margin-right: 1rem;
 }
+@media screen and (max-width: 601px) {
+    .selection {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+@media screen and (min-width: 602px) and (max-width: 800px) and (orientation: portrait) {
+    .selection {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
 </style>

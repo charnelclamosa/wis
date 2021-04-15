@@ -1,13 +1,13 @@
 <template>
 <div class="full-screen">
     <div class="selection">
-        <v-col cols="2">
+        <v-col>
             <v-select dense label="Location" v-model="selectedLocation" :items="lumberLocations" item-text="LocationName" return-object required :error-messages="locationValidation" @blur="$v.selectedLocation.$touch()"></v-select>
         </v-col>
-        <v-col cols="2">
+        <v-col>
             <v-select dense label="Line" v-model="selectedLine" :items="lumberLines" item-text="LineName" return-object required :error-messages="lineValidation" @blur="$v.selectedLine.$touch()"></v-select>
         </v-col>
-        <v-col cols="2">
+        <v-col>
             <primary-btn @click.native="getBundles(selectedLocation.LocationCode, selectedLine.LineCode)" text="View"></primary-btn>
         </v-col>
     </div>
@@ -192,10 +192,11 @@ export default {
 .selection {
     display: flex;
     padding: 1rem 2rem 0 2rem;
+    width: 60%;
 }
 
 .content {
-    padding: 0 2rem;
+    padding: 0 2rem 1rem 2rem;
 }
 
 .content-body {
@@ -205,5 +206,15 @@ export default {
 .content-footer {
     display: flex;
     justify-content: flex-end;
+}
+@media screen and (max-width: 601px) {
+    .selection {
+        width: 100%;
+    }
+}
+@media screen and (min-width: 602px) and (max-width: 800px) and (orientation: portrait) {
+    .selection {
+        width: 100%;
+    }
 }
 </style>
